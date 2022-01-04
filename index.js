@@ -31,6 +31,37 @@ app.use("/dogs", (req, res, next) => {
   next();
 });
 
+// Criando um middleware para proteger uma rota especifica
+// Aplicamos o middleware dentro de uma constante e depois aplicamos ela como callback function dentro de um determinado path
+const verifyPassword = (req, res, next) => {
+  // Verificamos o que está sendo enviando dentro da request para podermos acessar a informação presente na query string
+  // console.log(req.query);
+  // next();
+
+  // Após fazer a verificação criamos uma condicional para validar se o password que criamos está de acordo ou não para validar a senha
+  const { password } = req.query;
+  if (password === "password") {
+    next();
+  } else {
+    res.send("sorry you need a password");
+  }
+};
+
+// Criando um middleware para autenticar TODAS as rotas
+// app.use((req, res, next) => {
+// Verificamos o que está sendo enviando dentro da request para podermos acessar a informação presente na query string
+// console.log(req.query);
+// next();
+
+// Após fazer a verificação criamos uma condicional para validar se o password que criamos está de acordo ou não para validar a senha
+// const { password } = req.query;
+// if (password === "password") {
+//   next();
+// } else {
+//   res.send("sorry you need a password");
+// }
+// });
+
 // Exemplo para realizar a mesma função do morgan enviando o tipo de método que está sendo utilizado e também o caminho para o qual o request está sendo feito
 // app.use((req, res, next) => {
 //   console.log(req.method.toUpperCase(), req.path);
@@ -72,6 +103,19 @@ app.get("/", (req, res) => {
 // Copiamos a rota acima para implementar outra rota de teste
 app.get("/dogs", (req, res) => {
   res.send("Woof Woof");
+});
+
+// Criando uma rota para proteger especificamente aquela rota
+// Digamos que essa seja a rota que queremos proteger, então definimos nossa função middleware declarada acima para ser implementada como callback function dentro do nosso path abaixo
+app.get("/secret", verifyPassword, (req, res, next) => {
+  res.send("SECRET");
+});
+// Quando implementamos a função de verificar o password o que recebemos como retorno é o nosso next que no exemplo acima passa a ser a função callback declarada
+
+// Criando uma rota middleware 404 para not found
+app.use((req, res) => {
+  // Enviamos um status e na sequencia podemos enviar uma página 404 ou simplesmente uma mensagem para o usuário
+  res.status(404).send("NOT FOUND");
 });
 
 // Localhost sendo executado na porta 3000
